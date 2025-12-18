@@ -5,6 +5,8 @@ import numpy as np
 import torch.optim as optim
 from src.data.dataloader import get_data
 from src.models.CNN import CNN_classifier
+import mlflow
+import mlflow.pytorch
 
 EPOCH = 20
 BATCH_SIZE = 32
@@ -22,25 +24,39 @@ def train_model(epoch , batch_size , lr ,device = DEVICE):
 
     optimizer = optim.Adam(model.parameters() , lr = lr)
 
-    for epoch in range(EPOCH):
+    mlflow.set_experiment("CIFAR_Classifier_dvc")
 
-        model.train()
-        running_loss = 0.0
+    with mlflow.start_run():
 
-        for images , labels in train_dataloader:
+        mlflow.log_param("epochs" , EPOCH)
+        mlflow.log_param("Learning rate" , lr)
+        mlflow.log_param("Batch_size " , BATCH_SIZE)
+        mlflow.log_param("Model type" , "CNN_classifier")
 
-            images, labels = images.to(device), labels.to(device)
-            optimizer.zero_grad()
-            outputs = model(images)
-            loss = criterion(outputs , labels)
-            loss.backward()
-            optimizer.step()
 
-            running_loss += loss.item()
-        
-        avg_loss = running_loss / len(train_dataloader)
+        for epoch in range(EPOCH):
 
-        print(f"Epoch : {epoch+1} , loss : {avg_loss:.4f}")
+            model.train()
+            running_loss = 0.0
+
+            for images , labels in train_dataloader:
+
+                images, labels = images.to(device), labels.to(device)
+                optimizer.zero_grad()
+                outputs = model(images)
+                loss = criterion(outputs , labels)
+                loss.backward()
+                optimizer.step()
+
+                running_loss += loss.item()
+            
+            avg_loss = running_loss / len(train_dataloader)
+
+            mlflow.log_metric("training_loss" , avg_loss , step=epoch)
+
+            print(f"Epoch : {epoch+1} , loss : {avg_loss:.4f}")
+
+        mlflow.pytorch.log_model(model , artifact_path = "cnn_model")
 
     return model
 
