@@ -1,0 +1,11 @@
+torch
+torchvision
+mlflow
+dvc
+dvc[s3]
+boto3
+numpy
+pandas
+scikit-learn
+pyyaml
+tqdm
