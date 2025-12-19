@@ -1,0 +1,11 @@
+training:
+  EPOCH : 30
+  LR : 0.001
+  BATCH_SIZE : 32
+model:
+  name : CNN_classifier
+  num_classes : 10
+data:
+  data_path : data/raw
+mlflow:
+  experinments_name : CIFAR_Classifier_dvc
