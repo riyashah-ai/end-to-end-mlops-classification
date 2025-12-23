@@ -16,19 +16,22 @@ DEVICE = "cuda" if torch.cuda.is_available() else "cpu"
 print("Devide :",DEVICE)
 
 
-def train_model(config_path : str = "/home/riya/Desktop/end-to-end-mlops-classification/configs/train.yaml"):
+def train_model(config_path : str):
 
     print(config_path)
 
     cfg = load_config(config_path)
 
     train_config = cfg["training"]
-    data_config = cfg["data"]
+    # data_config = cfg["data"]
     mlflow_config = cfg["mlflow"]
     model_config = cfg["model"]
 
+     # 🔹 SageMaker paths (fallback for local run)
+    data_dir = os.environ.get("SM_CHANNEL_TRAINING", "data/raw")
+    model_dir = os.environ.get("SM_MODEL_DIR", "/home/riya/Desktop/end-to-end-mlops-classification/Model_save")
 
-    train_dataloader , test_dataloader = get_data(data_config["data_path"] , train_config["BATCH_SIZE"])
+    train_dataloader , test_dataloader = get_data(data_dir , train_config["BATCH_SIZE"])
 
     model = CNN_classifier(num_classes=model_config["num_classes"]).to(DEVICE)
 
@@ -107,13 +110,17 @@ def train_model(config_path : str = "/home/riya/Desktop/end-to-end-mlops-classif
             mlflow.log_metric("Validation_loss" , avg_val_loss , step=epoch)
             mlflow.log_metric("Validation_accuracy" , avg_val_accuracy , step=epoch)
 
+            # 🔹 Save model to SageMaker output directory
+            model_path = os.path.join(model_dir, "model.pth")
+            torch.save(model.state_dict(), model_path)
+
             print(
                 f"Epoch [{epoch+1}/{train_config['EPOCH']}] "
                 f"Train Loss: {avg_train_loss:.4f}, Train Acc: {avg_train_accuracy:.2f}% | "
                 f"Val Loss: {avg_val_loss:.4f}, Val Acc: {avg_val_accuracy:.2f}%"
             )
 
-        mlflow.pytorch.log_model(model , artifact_path = "cnn_model")
+        mlflow.pytorch.log_model(model , artifact_path = "cnn_model" , registered_model_name="cifar10_classifier")
 
     return model
 

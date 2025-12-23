@@ -213,3 +213,5 @@ mlruns/
 mlflow.db
 
 model.pth
+
+artifacts/
