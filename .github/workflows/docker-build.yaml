@@ -25,9 +25,3 @@ jobs:
           push : true
           tags: |
             riya25/cifar-training:v1
-
-            
-      
-
-
- 
