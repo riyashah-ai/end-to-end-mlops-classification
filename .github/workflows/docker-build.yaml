@@ -24,4 +24,4 @@ jobs:
           context: .
           push : true
           tags: |
-            riya25/cifar-training:v1
+            riya2502/cifar-training:v1
