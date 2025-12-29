@@ -2,9 +2,9 @@ from torchvision import datasets , transforms
 from torch.utils.data import DataLoader
 from pathlib import Path
 
-data_path = "./data/raw"
-batch_size = 32
-def get_data(data_path = data_path , batch_size= batch_size):
+# data_path = "./data/raw"
+# batch_size = 32
+def get_data(data_path , batch_size):
 
     train_transform = transforms.Compose([
         transforms.RandomHorizontalFlip(),

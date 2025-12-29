@@ -1,5 +1,5 @@
 training:
-  EPOCH : 50
+  EPOCH : 5
   LR : 0.001
   BATCH_SIZE : 64
 model:
@@ -8,4 +8,5 @@ model:
 data:
   data_path : data/raw
 mlflow:
-  experinments_name : CIFAR_Classifier_dvc
+  experinments_name : CIFAR_Classifier_docker
+  tracking_url : "http://0.0.0.0:5000"

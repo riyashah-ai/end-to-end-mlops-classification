@@ -53,7 +53,7 @@ CLASSES = (
 # )
 
 
-_ , test_dataloader = get_data()
+_ , test_dataloader = get_data(Data_path, BATCH_SIZE)
 # ----------------------------
 # LOAD MODEL
 # ----------------------------
@@ -76,6 +76,8 @@ all_labels = []
 with torch.no_grad():
     for images, labels in test_dataloader:
         images, labels = images.to(device), labels.to(device)
+        print(type(images))
+        exit()
         outputs = model(images)
         _, predicted = torch.max(outputs, 1)
 
